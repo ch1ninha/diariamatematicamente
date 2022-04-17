@@ -61,4 +61,9 @@ def logout():
     flash(f"{session['online_user']}, deslogado com sucesso!")
     session['online_user'] = None
     return redirect(url_for("index"))
+
+@app.route("/math_game")
+def math_game():
+    
+    return render_template("math_game.html")
 app.run(debug=True)
