@@ -12,8 +12,8 @@ p3 = Player("snow")
 
 # Usuarios para termos acessos ao site
 user1 = Usuario("lucas","chininha","123")
-user2 = Usuario("aguero","o_brabo_arg","321")
-user3 = Usuario("neymar","ney+mar","vasco")
+user2 = Usuario("aguero","aguero","321")
+user3 = Usuario("neymar","ney","vasco")
 
 usuarios = {user1.nickname : user1,
             user2.nickname : user2,
@@ -45,20 +45,30 @@ def login():
 
 @app.route("/autenticar", methods=['POST',])
 def autenticar():
+    if session['online_user'] != None:
+        flash("Você já está logado manoo!","warning")
+        return redirect(url_for("index"))
+
     if request.form['usuario'] in usuarios:
         user = usuarios[request.form['usuario']]
         if request.form['password'] == user.senha:
             session['online_user'] = user.nickname
-            flash(f"Login efetuado com sucesso! Bem-vindo, {user.nickname}")
+            flash(f"Login efetuado com sucesso! Bem-vindo, {user.nickname}", "success")
             next_page = request.form['next_page']
             return redirect(next_page)
+        else:
+            flash("Senha errada! :<","error")
+            return redirect(url_for("login"))
     else:
-        flash("Login não efetuado... :(")
-        return redirect(url_for("index"))
+        flash("Login não efetuado, usuario não encontrado! :(", "error")
+        return redirect(url_for("login"))
 
 @app.route("/logout")
 def logout():
-    flash(f"{session['online_user']}, deslogado com sucesso!")
+    if session['online_user'] == None:
+        flash("Você não está logado...", "warning")
+        return redirect(url_for("index"))
+    flash(f"{session['online_user']}, deslogado com sucesso!", "success")
     session['online_user'] = None
     return redirect(url_for("index"))
 
