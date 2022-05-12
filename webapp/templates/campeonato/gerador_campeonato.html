@@ -1,0 +1,19 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    <div class="gerador-header">
+        <h1>Gerador Campeonato Fifinha</h1>
+        <form method="POST" action="{{ url_for('autenticar_campeonato') }}">
+            <input type="hidden" name="next_page" value="{{ next_page }}"> 
+            <p><label>Nome do Campeonato</label> <input class="form-control" type="text" name="name_camp" required></p> 
+            <p><label>Número de Jogadores</label> <input class="form-control" type="number" name="n_players_camp" required></p> 
+            <p><button class="btn btn-primary" type="submit">Carregar Campeonato</button></p>
+        </form>
+    </div>
+
+    <!--
+    <div class="buttons-home">
+        <a href="http://127.0.0.1:5000/login"><button>Logar</button></a>
+        <a href="http://127.0.0.1:5000/new_player"><button>Novo Jogador</button></a>
+    </div>
+    -->
+{% endblock %}

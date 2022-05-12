@@ -10,13 +10,14 @@
         <tbody>
             {% for jogador in jogadores %}
             <tr>
-                <td>{{ jogador.name }}</td>
+                <td>{{ jogador.nickname }}</td>
                 <td>{{ jogador.score }}</td> 
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <div class="buttons-home">
+        <a href="http://127.0.0.1:5000/start_gerador_campeonato?next_page=home_gerador_campeonato"><button>Gerador Campeonato</button></a>
         <a href="http://127.0.0.1:5000/login?next_page=new_player"><button>Logar</button></a>
         <a href="http://127.0.0.1:5000/new_player"><button>Novo Jogador</button></a>
         <a href="http://127.0.0.1:5000/logout"><button>Logout</button></a>

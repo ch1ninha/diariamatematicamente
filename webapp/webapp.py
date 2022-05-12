@@ -2,27 +2,25 @@ from flask import Flask, render_template, request, redirect, session, flash, url
 from Jogador import Player
 from usuario import Usuario
 
+from dao import PlayerDao, UsuarioDao
+from flask_mysqldb import MySQL
+
+
 app = Flask(__name__)
 app.secret_key = "chininha"
+app.config['MYSQL_HOST'] = "127.0.0.1"
+app.config['MYSQL_USER'] = "root"
+app.config['MYSQL_PASSWORD'] = "C3!T4do1Do"
+app.config['MYSQL_DB'] = "matemaniac"
+app.config['MYSQL_PORT'] = 3306
 
-# Jogadores para colocar na lista inicial
-p1 = Player("inter673")
-p2 = Player("inter657")
-p3 = Player("snow")
-
-# Usuarios para termos acessos ao site
-user1 = Usuario("lucas","chininha","123")
-user2 = Usuario("aguero","aguero","321")
-user3 = Usuario("neymar","ney","vasco")
-
-usuarios = {user1.nickname : user1,
-            user2.nickname : user2,
-            user3.nickname : user3}
-
-lista_jogadores = [p1,p2,p3]
+db = MySQL(app)
+player_dao = PlayerDao(db)
+user_dao = UsuarioDao(db)
 
 @app.route("/")
 def index():
+    lista_jogadores = player_dao.listar()
     return render_template("home.html",jogadores=lista_jogadores,titulo="titulo")
 
 @app.route("/new_player")
@@ -34,24 +32,28 @@ def new_player():
 @app.route("/create",methods=['POST',])
 def create():
     nick_player = request.form['nick_player']
-    player = Player(nick_player)
-    lista_jogadores.append(player)
+    player = Player("vazio",nick_player)
+    player_dao.salvar(player)
     return redirect(url_for("index"))
 
 @app.route("/login")
 def login():
+    if session['online_user'] != None:
+        flash("Você JA está logado...", "warning")
+        return redirect(url_for("index"))
     next_page = request.args.get("next_page")
     return render_template("login.html",next_page=next_page)
 
 @app.route("/autenticar", methods=['POST',])
 def autenticar():
+    user = user_dao.buscar_por_id(request.form['usuario'])
+
     if session['online_user'] != None:
         flash("Você já está logado manoo!","warning")
         return redirect(url_for("index"))
 
-    if request.form['usuario'] in usuarios:
-        user = usuarios[request.form['usuario']]
-        if request.form['password'] == user.senha:
+    if user:
+        if request.form['password'] == user.password:
             session['online_user'] = user.nickname
             flash(f"Login efetuado com sucesso! Bem-vindo, {user.nickname}", "success")
             next_page = request.form['next_page']
@@ -74,6 +76,35 @@ def logout():
 
 @app.route("/math_game")
 def math_game():
+    if session['online_user'] != None:
+        return render_template("math_game.html")
+    else:
+        flash("Você não está logado...", "warning")
+        return redirect(url_for("index"))
+
+
+# gerador de campeonato
+@app.route("/start_gerador_campeonato")
+def start_gen_camp():
+    next_page = request.args.get("next_page")
+    return render_template("campeonato/gerador_campeonato.html",next_page=next_page)
+
+@app.route("/home_gerador_campeonato")
+def home_gerador_campeonato():
+
+    return render_template("campeonato/home_gerador_campeonato.html",
+                            name_camp=name_campeonato,
+                            n_players_camp=n_players_campeonato)
+
+@app.route("/autenticar_campeonato",methods=["POST",])
+def autenticar_campeonato():
+    global name_campeonato, n_players_campeonato
+
+    name_campeonato = request.form['name_camp']
+    n_players_campeonato = request.form['n_players_camp']
     
-    return render_template("math_game.html")
+    next_page = request.form["next_page"]
+    return redirect(next_page)
+
+
 app.run(debug=True)
