@@ -1,4 +1,5 @@
 # diariamatematicamente
  
 - Matemaniac game
-- Gerador de campeonato
+- Adicionar o jogo para jogar
+    - Adicionar um banco que grava as informações dos jogos

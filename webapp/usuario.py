@@ -1,7 +1,4 @@
 class Usuario:
-    def __init__(self, name, nickname, password):
-        self.name = name # id
+    def __init__(self, nickname, password):
         self.nickname = nickname
         self.password = password
-
-    

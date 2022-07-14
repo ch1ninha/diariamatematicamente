@@ -13,19 +13,19 @@
  }
 
  #messages li.error{
-    background-color: #dc3545;
+    background-color: var(--bs-danger);
     padding: 20px;
     color:white;
     margin-bottom: 15px;
  }
  #messages li.success{
-    background-color: #198754;
+    background-color: var(--bs-success);
     padding: 20px;
     color:white;
     margin-bottom: 15px;
  }
 #messages li.warning{
-    background-color: #ffc107;
+    background-color: var(--bs-warning);
     padding: 20px;
     color:white;
     margin-bottom: 15px;
