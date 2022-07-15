@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-app.secret_key = "chininha"
+app.secret_key = "6359745a748179834f6438d5faf6413bec5a9d13"
 
 db = SQLAlchemy(app)
 
@@ -27,17 +27,20 @@ titulo_site = "Matemaniac"
 @app.route("/")
 def index():
     lista_jogadores = db_user.query.order_by(db_user.score) # = player_dao.listar()
-
+    usuario_online = session.get("online_user")
+    if usuario_online == None:
+        return render_template("home.html",jogadores=lista_jogadores,
+                               titulo=titulo_site,usuario_online=None)
     return render_template("home.html",jogadores=lista_jogadores,
-                            titulo=titulo_site)
+                           titulo=titulo_site,usuario_online=usuario_online)
 
 
-@app.route("/new_player")
-def new_player():
+@app.route("/new_user")
+def new_user():
     if session.get("online_user") == None:
         # "/login?next_page=new_player")
-        return redirect(url_for("login", next_page=url_for("new_player")))
-    return render_template("new_player.html", titulo=titulo_site)
+        return redirect(url_for("login", next_page=url_for("math_game")))
+    return render_template("new_user.html", titulo="Registrar")
 
 
 @app.route("/create", methods=['POST', ])
@@ -49,28 +52,28 @@ def create():
     usuario_create = db_user.query.filter_by(id_nickname=id_nickname).first()
 
     if usuario_create:
-        flash("Já existe um usuario com esse nick. :(","error")
-        return redirect(url_for("index"))
+        flash("Já existe um usuario com esse nick. Tente fazer o login:(","danger")
+        return redirect(url_for("login"))
 
     novo_usuario = db_user(id_nickname=id_nickname,password=password)
     db.session.add(novo_usuario)
     db.session.commit()
-    return redirect(url_for("index"))
+    flash(f"Tudo certo na criação da conta, {id_nickname}", "success")
+    return redirect(url_for("math_game"))
 
 
 @app.route("/login")
 def login():
     if session.get("online_user") != None:
-        flash("Você JA está logado...", "warning")
+        flash(f"Você está logado com o usuario: {session['online_user']}", "warning")
         return redirect(url_for("index"))
     next_page = request.args.get("next_page")
-    return render_template("login.html", next_page=next_page)
+    return render_template("login.html", next_page=next_page, title="Login")
 
 
 @app.route("/autenticar", methods=['POST',])
 def autenticar():
     user = db_user.query.filter_by(id_nickname=request.form['usuario']).first()
-    print(f"------- {user} --------")
     if session.get("online_user") != None:
         flash("Você já está logado manoo!", "warning")
         return redirect(url_for("index"))
@@ -83,10 +86,10 @@ def autenticar():
             next_page = request.form['next_page']
             return redirect(next_page)
         else:
-            flash("Senha errada! :<", "error")
+            flash("Senha errada! :<", "danger")
             return redirect(url_for("login"))
     else:
-        flash("Login não efetuado, usuario não encontrado! :(", "error")
+        flash("Login não efetuado, usuario não encontrado! :(", "danger")
         return redirect(url_for("login"))
 
 
