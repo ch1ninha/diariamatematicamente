@@ -7,29 +7,21 @@
  */
 
  footer {
-     position: fixed;
-     bottom: 0;
-     left: 50%;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
  }
-
- #messages li.error{
-    background-color: var(--bs-danger);
-    padding: 20px;
-    color:white;
-    margin-bottom: 15px;
- }
- #messages li.success{
-    background-color: var(--bs-success);
-    padding: 20px;
-    color:white;
-    margin-bottom: 15px;
- }
-#messages li.warning{
-    background-color: var(--bs-warning);
-    padding: 20px;
-    color:white;
-    margin-bottom: 15px;
+ .valores_dos_jogos{
+    display: none;
 }
+ div.header{
+    padding: 60px;
+    text-align: center;
+    background: red;
+    color: white;
+    font-size: 30px;
+}
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -2503,8 +2495,6 @@ textarea.form-control-lg {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  -webkit-print-color-adjust: exact;
-  color-adjust: exact;
 }
 .form-check-input[type=checkbox] {
   border-radius: 0.25em;

@@ -8,11 +8,28 @@
 
     
     <div class="gaming-zone">
-        {% for i in range(10) %}
-        <p>
-            {{ i }}
-        </p>
-        {% endfor %}
+        <form method="POST" action="{{ url_for('confirmar_respostas') }}">
+            <table class="table table-striped table-responsive table-bordered">
+                <thead class="thead-default">
+                    <tr>
+                        <th>Problema</th>
+                        <th>Resposta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in dicionario_jogos %}
+                    <tr>
+                        <input type="hidden" name="num_1" value="{{dicionario_jogos[i].num_1}}">
+                        <input type="hidden" name="num_2" value="{{dicionario_jogos[i].num_2}}">
+                        <input type="hidden" name="resposta" value="{{dicionario_jogos[i].num_2 * dicionario_jogos[i].num_1}}">
+                        <td id="jogo_{{i}}" name="jogo_{{i}}">{{ dicionario_jogos[i].num_1 }} * {{ dicionario_jogos[i].num_2 }}</td>
+                        <td><input type="number" id="tentativa_{{i}}" name="tentativa_{{i}}"></td>
+                    </tr>
+                    {% endfor %}
+                    </div>
+                </tbody>
+            </table>
+            <button class="btn btn-primary" type="submit">Confirmar Resultado</button>
     </div>
     
     <div class="buttons-home">

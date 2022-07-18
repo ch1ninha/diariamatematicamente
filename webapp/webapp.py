@@ -1,7 +1,8 @@
 from email.policy import default
 from logging import warning
 from flask import Flask, render_template, request, redirect, session, flash, url_for
-import random
+from Game import Game
+
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -26,7 +27,8 @@ class db_user(db.Model):
 titulo_site = "Matemaniac"
 @app.route("/")
 def index():
-    lista_jogadores = db_user.query.order_by(db_user.score) # = player_dao.listar()
+    lista_jogadores = list(db_user.query.order_by(db_user.score))[:11]
+
     usuario_online = session.get("online_user")
     if usuario_online == None:
         return render_template("home.html",jogadores=lista_jogadores,
@@ -37,9 +39,10 @@ def index():
 
 @app.route("/new_user")
 def new_user():
-    if session.get("online_user") == None:
+    if session.get("online_user") != None:
+        flash(f"Tem certeza? Você já está logado com o usuario {session['online_user']}","warning")
         # "/login?next_page=new_player")
-        return redirect(url_for("login", next_page=url_for("math_game")))
+        # return render_template("new_user.html", titulo="Registrar")
     return render_template("new_user.html", titulo="Registrar")
 
 
@@ -52,14 +55,14 @@ def create():
     usuario_create = db_user.query.filter_by(id_nickname=id_nickname).first()
 
     if usuario_create:
-        flash("Já existe um usuario com esse nick. Tente fazer o login:(","danger")
+        flash("Já existe um usuario com esse nick. Tente fazer o login.","danger")
         return redirect(url_for("login"))
 
     novo_usuario = db_user(id_nickname=id_nickname,password=password)
     db.session.add(novo_usuario)
     db.session.commit()
     flash(f"Tudo certo na criação da conta, {id_nickname}", "success")
-    return redirect(url_for("math_game"))
+    return render_template("login.html", next_page="math_game") # precisa do parametro 'next_page'
 
 
 @app.route("/login")
@@ -68,6 +71,8 @@ def login():
         flash(f"Você está logado com o usuario: {session['online_user']}", "warning")
         return redirect(url_for("index"))
     next_page = request.args.get("next_page")
+    if next_page == None:
+        next_page = "math_game"
     return render_template("login.html", next_page=next_page, title="Login")
 
 
@@ -87,10 +92,10 @@ def autenticar():
             return redirect(next_page)
         else:
             flash("Senha errada! :<", "danger")
-            return redirect(url_for("login"))
+            return redirect(url_for('login', next_page='math_game'))
     else:
         flash("Login não efetuado, usuario não encontrado! :(", "danger")
-        return redirect(url_for("login"))
+        return redirect(url_for('login', next_page='math_game'))
 
 
 @app.route("/logout")
@@ -106,9 +111,23 @@ def logout():
 @app.route("/math_game")
 def math_game():
     if session.get("online_user") != None:
-        return render_template("math_game.html")
+        game = Game()
+        dicionario_jogos = game.definir_jogos()
+
+        return render_template("math_game.html",
+                               dicionario_jogos=dicionario_jogos)
     else:
-        flash("Você não está logado...", "warning")
+        flash("Faça o login para acessar essa página.", "warning")
         return redirect(url_for("index"))
 
+@app.route("/confirmar_respostas", methods=['POST',])
+def confirmar_respostas():
+    jogos_lista = []
+    resultados_lista = []
+    for i in range(10):
+        jogos_lista.append(request.form[f'jogo_{i}'])
+        resultados_lista.append(request.form[f'resposta_{i}'])
+
+    print(jogos_lista)
+    print(resultados_lista)
 app.run(debug=True)
