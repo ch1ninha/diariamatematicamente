@@ -13,4 +13,3 @@ class Game:
         return jogos
 
 game = Game()
-print(game.definir_jogos())

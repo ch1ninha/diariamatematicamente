@@ -1,18 +1,23 @@
 from email.policy import default
 from logging import warning
+from tkinter import N
+
+from pandas import read_sql_query
 from flask import Flask, render_template, request, redirect, session, flash, url_for
 from Game import Game
 
 
 from flask_sqlalchemy import SQLAlchemy
 
+arquivo_txt_secrets = open("C:/Users/lucas/Desktop/chininhaNortao/Game/webapp/secrets.txt","r")
+secrets_key, password_mysql_local = arquivo_txt_secrets.read().split("\n")
 
 app = Flask(__name__)
-app.secret_key = "6359745a748179834f6438d5faf6413bec5a9d13"
+app.secret_key = secrets_key
 
 db = SQLAlchemy(app)
 
-uri_sqlalchemy = 'mysql+mysqlconnector://root:C3!T4do1Do@127.0.0.1/matemaniac'
+uri_sqlalchemy = f'mysql+mysqlconnector://root:{password_mysql_local}@127.0.0.1/matemaniac'
 app.config['SQLALCHEMY_DATABASE_URI'] = uri_sqlalchemy
 
 
@@ -113,7 +118,6 @@ def math_game():
     if session.get("online_user") != None:
         game = Game()
         dicionario_jogos = game.definir_jogos()
-
         return render_template("math_game.html",
                                dicionario_jogos=dicionario_jogos)
     else:
@@ -122,12 +126,28 @@ def math_game():
 
 @app.route("/confirmar_respostas", methods=['POST',])
 def confirmar_respostas():
-    jogos_lista = []
     resultados_lista = []
+    num_1_lista = []
+    num_2_lista = []
     for i in range(10):
-        jogos_lista.append(request.form[f'jogo_{i}'])
-        resultados_lista.append(request.form[f'resposta_{i}'])
+        num_1_lista.append(request.form.get(f'jogo_{i}_num_1'))
+        num_2_lista.append(request.form.get(f'jogo_{i}_num_2'))
+        resultados_lista.append(request.form.get(f'tentativa_{i}'))
 
-    print(jogos_lista)
-    print(resultados_lista)
+    num1_lista = list(map(lambda x: int(x), num_1_lista))
+    num2_lista = list(map(lambda x: int(x), num_2_lista))
+    lista_numeros = [_ for _ in zip(num1_lista,num2_lista)]
+    resultados_lista = list(map(lambda x: int(x), resultados_lista))
+    print(lista_numeros)
+    for tent in range(len(lista_numeros)):
+        jogo_atual = lista_numeros[tent]
+        resultado = jogo_atual[0] * jogo_atual[1]
+        if resultado == resultados_lista[tent]:
+            print(f"ACERTOU: tent {resultado} x {resultados_lista[tent]} res")
+        else:
+            print(f"ERROU: tent {resultado} x {resultados_lista[tent]} res")
+    return redirect(url_for('math_game'))
+    # criar pagina de resultado, amanha
+
+    # criar banco de dados para resultados e deixar lá
 app.run(debug=True)

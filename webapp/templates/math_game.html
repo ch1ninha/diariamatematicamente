@@ -19,9 +19,11 @@
                 <tbody>
                     {% for i in dicionario_jogos %}
                     <tr>
-                        <input type="hidden" name="num_1" value="{{dicionario_jogos[i].num_1}}">
-                        <input type="hidden" name="num_2" value="{{dicionario_jogos[i].num_2}}">
-                        <input type="hidden" name="resposta" value="{{dicionario_jogos[i].num_2 * dicionario_jogos[i].num_1}}">
+                        <input type="hidden" id="jogo_{{i}}_num_1" name="jogo_{{i}}_num_1" value="{{dicionario_jogos[i].num_1}}">
+                        <input type="hidden" id="jogo_{{i}}_num_2" name="jogo_{{i}}_num_2" value="{{dicionario_jogos[i].num_2}}">
+                        <!--<input type="hidden" class="form-control" name="pergunta_{{i}}" id="pergunta_{{i}}" value="{{dicionario_jogos[i].num_2 * dicionario_jogos[i].num_1}}">
+                        <input type="hidden" name="pergunta_{{i}}" id="pergunta_{{i}}" value="{{dicionario_jogos[i].num_2 * dicionario_jogos[i].num_1}}">
+                        -->
                         <td id="jogo_{{i}}" name="jogo_{{i}}">{{ dicionario_jogos[i].num_1 }} * {{ dicionario_jogos[i].num_2 }}</td>
                         <td><input type="number" id="tentativa_{{i}}" name="tentativa_{{i}}"></td>
                     </tr>
@@ -30,6 +32,7 @@
                 </tbody>
             </table>
             <button class="btn btn-primary" type="submit">Confirmar Resultado</button>
+        </form>
     </div>
     
     <div class="buttons-home">
