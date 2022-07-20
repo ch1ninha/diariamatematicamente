@@ -1,0 +1,31 @@
+{% extends "template.html" %}
+{% block conteudo %}
+    <div class="top-form-create-usuario">
+        <h3>Bem-vindo ao matemaniac, crie seu usuario para acessar área de treino.</h3>
+    </div>
+    <legend class="border-bottom mb-4">Pudim</legend>
+
+    <div class="content-section">
+        <form action="{{ url_for('create') }}" method="post">
+            <fieldset class="form-group">
+                <div class="form-group">
+                    <label>Nome do Usuario</label>
+                    <input type="text" id="id_nickname" name="id_nickname" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Senha do Usuario</label>
+                    <input type="password" id="password" name="password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary btn-salvar">Salvar</button>
+            </fieldset>
+        </form>
+    </div>
+
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Já tem uma conta patrão? Então acesse a área para 
+            <a class="ml-2" href="{{ url_for('login', next_page='math_game')}}">Logar</a>
+        </small>
+        <!-- Já tem uma conta? encaminha para o login /login-->
+    </div>
+{% endblock %}

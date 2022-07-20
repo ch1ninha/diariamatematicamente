@@ -1,38 +1,33 @@
 {% extends "template.html" %}
 {% block conteudo %}
-    <table class="table table-striped table-responsive table-bordered">
-        <thead class="thead-default">
-            <tr>
-                <th>Jogadores</th>
-                <th>Pontuacão</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for jogador in jogadores %}
-            <tr>
-                <td>{{ jogador.id_nickname }}</td>
-                <td>{{ jogador.score }}</td> 
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="ranking-users">
+        <h3>Ranking das 10 maiores pontuações</h3>
+        <table class="table table-striped table-responsive table-bordered">
+            <thead class="thead-default">
+                <tr>
+                    <th>Jogadores</th>
+                    <th>Pontuacão</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for jogador in jogadores %}
+                <tr>
+                    <td>{{ jogador.id_nickname }}</td>
+                    <td>{{ jogador.score }}</td> 
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <div class="buttons-home">
-
-        <!--{% if 'False' in sessao %}
-            <a href="http://127.0.0.1:5000/login?next_page=new_player"><button>Logar</button></a>
-        {% endif %} -->
-        <a href="http://127.0.0.1:5000/login?next_page=math_game"><button>Logar</button></a>
-        <a href="http://127.0.0.1:5000/new_player"><button>Novo Jogador</button></a>
-        <a href="http://127.0.0.1:5000/logout"><button>Logout</button></a>
+        {% if not usuario_online %}
+            <a href="http://127.0.0.1:5000/login?next_page=math_game"><button>Logar</button></a>
+        {% endif %}
+        <a href="http://127.0.0.1:5000/new_user"><button>Criar Conta</button></a>
+        {% if usuario_online %}
+            <a href="http://127.0.0.1:5000/logout"><button>Logout</button></a>
+            <a href="http://127.0.0.1:5000/math_game"><button>Acessar Painel</button></a>
+        {% endif %}
     </div>
-    <div class="baixar-o-footer">
-        <p>baixa o footer ne</p>
-        <br>
-        <p>br nao eh brasil, pula linha ai fiao</p>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br><br><br><br><br><br>
-    </div>
+    
 {% endblock %}

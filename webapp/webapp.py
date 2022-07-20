@@ -1,17 +1,23 @@
 from email.policy import default
 from logging import warning
+from tkinter import N
+
+from pandas import read_sql_query
 from flask import Flask, render_template, request, redirect, session, flash, url_for
-import random
+from Game import Game
+
 
 from flask_sqlalchemy import SQLAlchemy
 
+arquivo_txt_secrets = open("C:/Users/lucas/Desktop/chininhaNortao/Game/webapp/secrets.txt","r")
+secrets_key, password_mysql_local = arquivo_txt_secrets.read().split("\n")
 
 app = Flask(__name__)
-app.secret_key = "chininha"
+app.secret_key = secrets_key
 
 db = SQLAlchemy(app)
 
-uri_sqlalchemy = 'mysql+mysqlconnector://root:C3!T4do1Do@127.0.0.1/matemaniac'
+uri_sqlalchemy = f'mysql+mysqlconnector://root:{password_mysql_local}@127.0.0.1/matemaniac'
 app.config['SQLALCHEMY_DATABASE_URI'] = uri_sqlalchemy
 
 
@@ -26,18 +32,23 @@ class db_user(db.Model):
 titulo_site = "Matemaniac"
 @app.route("/")
 def index():
-    lista_jogadores = db_user.query.order_by(db_user.score) # = player_dao.listar()
+    lista_jogadores = list(db_user.query.order_by(db_user.score))[:11]
 
+    usuario_online = session.get("online_user")
+    if usuario_online == None:
+        return render_template("home.html",jogadores=lista_jogadores,
+                               titulo=titulo_site,usuario_online=None)
     return render_template("home.html",jogadores=lista_jogadores,
-                            titulo=titulo_site)
+                           titulo=titulo_site,usuario_online=usuario_online)
 
 
-@app.route("/new_player")
-def new_player():
-    if session.get("online_user") == None:
+@app.route("/new_user")
+def new_user():
+    if session.get("online_user") != None:
+        flash(f"Tem certeza? Você já está logado com o usuario {session['online_user']}","warning")
         # "/login?next_page=new_player")
-        return redirect(url_for("login", next_page=url_for("new_player")))
-    return render_template("new_player.html", titulo=titulo_site)
+        # return render_template("new_user.html", titulo="Registrar")
+    return render_template("new_user.html", titulo="Registrar")
 
 
 @app.route("/create", methods=['POST', ])
@@ -49,28 +60,30 @@ def create():
     usuario_create = db_user.query.filter_by(id_nickname=id_nickname).first()
 
     if usuario_create:
-        flash("Já existe um usuario com esse nick. :(","error")
-        return redirect(url_for("index"))
+        flash("Já existe um usuario com esse nick. Tente fazer o login.","danger")
+        return redirect(url_for("login"))
 
     novo_usuario = db_user(id_nickname=id_nickname,password=password)
     db.session.add(novo_usuario)
     db.session.commit()
-    return redirect(url_for("index"))
+    flash(f"Tudo certo na criação da conta, {id_nickname}", "success")
+    return render_template("login.html", next_page="math_game") # precisa do parametro 'next_page'
 
 
 @app.route("/login")
 def login():
     if session.get("online_user") != None:
-        flash("Você JA está logado...", "warning")
+        flash(f"Você está logado com o usuario: {session['online_user']}", "warning")
         return redirect(url_for("index"))
     next_page = request.args.get("next_page")
-    return render_template("login.html", next_page=next_page)
+    if next_page == None:
+        next_page = "math_game"
+    return render_template("login.html", next_page=next_page, title="Login")
 
 
 @app.route("/autenticar", methods=['POST',])
 def autenticar():
     user = db_user.query.filter_by(id_nickname=request.form['usuario']).first()
-    print(f"------- {user} --------")
     if session.get("online_user") != None:
         flash("Você já está logado manoo!", "warning")
         return redirect(url_for("index"))
@@ -83,11 +96,11 @@ def autenticar():
             next_page = request.form['next_page']
             return redirect(next_page)
         else:
-            flash("Senha errada! :<", "error")
-            return redirect(url_for("login"))
+            flash("Senha errada! :<", "danger")
+            return redirect(url_for('login', next_page='math_game'))
     else:
-        flash("Login não efetuado, usuario não encontrado! :(", "error")
-        return redirect(url_for("login"))
+        flash("Login não efetuado, usuario não encontrado! :(", "danger")
+        return redirect(url_for('login', next_page='math_game'))
 
 
 @app.route("/logout")
@@ -103,9 +116,65 @@ def logout():
 @app.route("/math_game")
 def math_game():
     if session.get("online_user") != None:
-        return render_template("math_game.html")
+        game = Game()
+        dicionario_jogos = game.definir_jogos()
+        return render_template("math_game.html",
+                               dicionario_jogos=dicionario_jogos,
+                               next_page="result_game")
     else:
-        flash("Você não está logado...", "warning")
+        flash("Faça o login para acessar essa página.", "warning")
         return redirect(url_for("index"))
 
+@app.route("/confirmar_respostas", methods=['POST',])
+def confirmar_respostas():
+    next_page = request.form['next_page']
+    resultados_lista = []
+    num_1_lista = []
+    num_2_lista = []
+    for i in range(10):
+        num_1_lista.append(request.form.get(f'jogo_{i}_num_1'))
+        num_2_lista.append(request.form.get(f'jogo_{i}_num_2'))
+        resultados_lista.append(request.form.get(f'tentativa_{i}'))
+
+    num1_lista = list(map(lambda x: int(x), num_1_lista))
+    num2_lista = list(map(lambda x: int(x), num_2_lista))
+    lista_numeros = [_ for _ in zip(num1_lista,num2_lista)]
+    resultados_lista = list(map(lambda x: int(x), resultados_lista))
+    dicionario_resultado = {'acertou':0,
+                            'errou':0,
+                            'tentativas':0}
+    dicionario_jogos = {}
+    tentativas = 0
+    for tent in range(len(lista_numeros)):
+        jogo_atual = lista_numeros[tent]
+        resultado = jogo_atual[0] * jogo_atual[1]
+        tentativas += 1
+        dicionario_jogos[tent] = {"num1":jogo_atual[0],
+                                  "num2":jogo_atual[1],
+                                  "tentativa":resultados_lista[tent],
+                                  "resultado":resultado}
+        
+        if resultado == resultados_lista[tent]:
+            # ACERTOU FEI
+            dicionario_resultado["acertou"] = dicionario_resultado["acertou"] + 1
+            print(f"ACERTOU: tent {resultado} x {resultados_lista[tent]} res")
+        else:
+            dicionario_resultado["errou"] = dicionario_resultado["errou"] + 1
+            print(f"ERROU: tent {resultado} x {resultados_lista[tent]} res")
+        
+        dicionario_resultado["tentativas"] = tentativas
+
+        # adicionar a query para colocar no banco de dados o jogo
+    return render_template(f"{next_page}.html", dicio_jogo=dicionario_jogos,
+                           dicio_res=dicionario_resultado)
+
+'''
+@app.route("/result_game")
+def result_game():
+    dicionario_jogos = request.args['dicio_jogo']
+    print(dicionario_jogos)
+    # criar pagina de resultado, amanha
+    return render_template("result_game.html",dicio_jogo=dicionario_jogos)
+    # criar banco de dados para resultados e deixar lá
+'''
 app.run(debug=True)
