@@ -119,13 +119,15 @@ def math_game():
         game = Game()
         dicionario_jogos = game.definir_jogos()
         return render_template("math_game.html",
-                               dicionario_jogos=dicionario_jogos)
+                               dicionario_jogos=dicionario_jogos,
+                               next_page="result_game")
     else:
         flash("Faça o login para acessar essa página.", "warning")
         return redirect(url_for("index"))
 
 @app.route("/confirmar_respostas", methods=['POST',])
 def confirmar_respostas():
+    next_page = request.form['next_page']
     resultados_lista = []
     num_1_lista = []
     num_2_lista = []
@@ -138,16 +140,41 @@ def confirmar_respostas():
     num2_lista = list(map(lambda x: int(x), num_2_lista))
     lista_numeros = [_ for _ in zip(num1_lista,num2_lista)]
     resultados_lista = list(map(lambda x: int(x), resultados_lista))
-    print(lista_numeros)
+    dicionario_resultado = {'acertou':0,
+                            'errou':0,
+                            'tentativas':0}
+    dicionario_jogos = {}
+    tentativas = 0
     for tent in range(len(lista_numeros)):
         jogo_atual = lista_numeros[tent]
         resultado = jogo_atual[0] * jogo_atual[1]
+        tentativas += 1
+        dicionario_jogos[tent] = {"num1":jogo_atual[0],
+                                  "num2":jogo_atual[1],
+                                  "tentativa":resultados_lista[tent],
+                                  "resultado":resultado}
+        
         if resultado == resultados_lista[tent]:
+            # ACERTOU FEI
+            dicionario_resultado["acertou"] = dicionario_resultado["acertou"] + 1
             print(f"ACERTOU: tent {resultado} x {resultados_lista[tent]} res")
         else:
+            dicionario_resultado["errou"] = dicionario_resultado["errou"] + 1
             print(f"ERROU: tent {resultado} x {resultados_lista[tent]} res")
-    return redirect(url_for('math_game'))
-    # criar pagina de resultado, amanha
+        
+        dicionario_resultado["tentativas"] = tentativas
 
+        # adicionar a query para colocar no banco de dados o jogo
+    return render_template(f"{next_page}.html", dicio_jogo=dicionario_jogos,
+                           dicio_res=dicionario_resultado)
+
+'''
+@app.route("/result_game")
+def result_game():
+    dicionario_jogos = request.args['dicio_jogo']
+    print(dicionario_jogos)
+    # criar pagina de resultado, amanha
+    return render_template("result_game.html",dicio_jogo=dicionario_jogos)
     # criar banco de dados para resultados e deixar lá
+'''
 app.run(debug=True)

@@ -1,0 +1,48 @@
+{% extends "template.html" %}
+{% block conteudo %}
+
+    <div class="result-score">
+        Você acertou: {{dicio_res['acertou']}}
+        Erradas: {{dicio_res['errou']}}
+        tentativas: {{dicio_res['tentativas']}}
+    </div>
+    <div class="result-zone">
+        <table class="table table-striped table-responsive table-bordered">
+            <thead class="thead-default">
+                <tr>
+                    <th>Problema</th>
+                    <th>Tentativa</th>
+                    <th>Resposta Correta</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in dicio_jogo %}
+                    {% if dicio_jogo[i]['tentativa'] == dicio_jogo[i]['resultado'] %}
+                        <tr>
+                            <td id="acertou" class="acertou" name="problema">{{ dicio_jogo[i].num1 }} x {{ dicio_jogo[i].num2 }}</td>
+                            <td id="acertou" class="acertou" name="tentativa">{{ dicio_jogo[i]['tentativa'] }}</td>
+                            <td id="acertou" class="acertou" name="resposta">{{ dicio_jogo[i]['resultado'] }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td id="errou" class="errou" name="problema">{{ dicio_jogo[i].num1 }} x {{ dicio_jogo[i].num2 }}</td>
+                            <td id="errou" class="errou" name="tentativa">{{ dicio_jogo[i]['tentativa'] }}</td>
+                            <td id="errou" class="errou" name="resposta">{{ dicio_jogo[i]['resultado'] }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+        <div>
+            <!-- Jogar dnv? -->
+        
+            <button class="btn btn-primary" type="submit">Confirmar Resultado</button>
+        </div>
+    </div>
+    
+    <div class="buttons-home">
+        <a href="http://127.0.0.1:5000/logout"><button>Logout</button></a>
+    </div>
+{% endblock %}

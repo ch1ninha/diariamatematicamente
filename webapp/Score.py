@@ -24,10 +24,14 @@ class Score:
     def set_trying(self,trying):
         self._trying = trying
 
-    def tentativa(self):
-        tentativa = self.get_trying()
-        tentativa += 1
-        self.set_trying(tentativa)
+    
+    def resposta_correta(self):
+        correta = self.get_correct()
+        self.set_correct(correta + 1)
+
+    def resposta_errada(self):
+        errada = self.get_error()
+        self.set_error(errada + 1)
     
     # métodos essenciais
     def conferir_pontuacao(self):
