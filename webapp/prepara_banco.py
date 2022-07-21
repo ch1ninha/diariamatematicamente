@@ -1,6 +1,10 @@
 import MySQLdb
 print('Conectando...')
-conn = MySQLdb.connect(user='root', passwd='C3!T4do1Do',
+
+arquivo_txt_secrets = open("C:/Users/lucas/Desktop/chininhaNortao/Game/webapp/secrets.txt","r")
+secrets_key, password_mysql_local = arquivo_txt_secrets.read().split("\n")
+
+conn = MySQLdb.connect(user='root', passwd=password_mysql_local,
                        host='127.0.0.1', port=3306)
 
 
@@ -25,9 +29,6 @@ cursor = conn.cursor()
 cursor.executemany(
       'INSERT INTO matemaniac.db_user (id_nickname, password) VALUES (%s, %s)',
       [
-            ('luan', 'flask'),
-            ('nico', '7a1'),
-            ('danilo', 'vegas'),
             ('chininha', '123')
       ])
 
