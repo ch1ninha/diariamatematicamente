@@ -1,0 +1,26 @@
+{% extends "template.html" %}
+{% block conteudo %}
+<div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+    <main role="main" class="inner cover">
+      <h1 class="cover-heading">Sobre</h1>
+      <p class="lead">Matemaniac foi uma ideia de treinar a lógica matemática, mantendo diariamente exercícios sendo realizados dentro de uma aplicação que conseguiria compartilhar com meus amigos. Salvando essas informações para analisarmos durante o tempo.<br>
+        <br>
+        Agradecimento a série de Flask do <a href="https://www.youtube.com/watch?v=MwZwr5Tvyxo&list=PL-osiE80TeTs4UjLw5MM6OjgkjFeUxCYH">Corey Schafer</a> e conteúdos sobre Flask da <a href="https://www.alura.com.br/">Alura</a> gerando um aprendizado fundamental para a criação.
+        </p>
+    </main>
+
+
+    <div class="buttons-home">
+        {% if not usuario_online %}
+            <form action="http://127.0.0.1:5000/login?next_page=math_game">
+                <input class="btn btn-lg btn-primary" type="submit" value="Logar"/>
+            </form>
+            <br>
+            <form action="http://127.0.0.1:5000/new_user">
+                <input class="btn btn-lg btn-primary" type="submit" value="Criar Conta"/>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -16,7 +16,10 @@
             </form>
         </div>
 
-        <div>
-            <!-- Caso não tenha uma conta, para se registrar /register-->
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Ainda não tem uma conta? Faça o cadastro!
+                <a class="ml-2" href="{{ url_for('new_user')}}">Registrar</a>
+            </small>
         </div>
 {% endblock %}

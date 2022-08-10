@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Jogoteca</title>
+        <title>Matemaniac</title>
         <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap.css') }}"></link>
     </head>
 <body>
@@ -17,19 +17,21 @@
                 </ul>
             {% endif %}
         {% endwith %}
-        <div class="header">
+        <header class="header">
             <div class="page-header">
-                <h1>{{ titulo }}</h1>
+                <h1>Matemaniac</h1>
             </div>
-        </div>
+        </header>
         {% block conteudo %}
 
         {% endblock %}
     </div>
     <div>
         <footer>
-            <a href="http://127.0.0.1:5000"><button>Voltar Home</button></a>
-            <p>By: chininhaNortao -> <a href="https://github.com/ch1ninha">github</a></p>
+            <a href="http://127.0.0.1:5000"><button class="btn-secondary">Voltar Home</button></a><br>
+            <small class="btn-github">
+                By: chininhaNortao -> <a href="https://github.com/ch1ninha">github</a>
+            </small>
         </footer>
     </div>
   </body>
