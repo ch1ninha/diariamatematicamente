@@ -8,18 +8,44 @@
 
  footer {
     position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     bottom: 0;
     left: 50%;
  }
 
- div.header{
+ header.header{
     padding: 60px;
-    text-align: center;
-    background: red;
-    color: white;
-    font-size: 30px;
+    background-image: url(../static/img/papel-parede.jpg);
+    display: flex;
+    height: 120px;
+    min-width: 120px;
+    align-items: center;
+    color: rgb(0, 0, 0);
+    text-shadow: rgb(0, 0, 0) 0 0 .2em;
 }
 
+button.btn-back-to-menu{
+    text-align: center;
+}
+.btn-linkedin{
+    text-align: center;
+}
+div.buttons-home{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+div.buttons-registrar{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    left: 50%;
+}
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -3030,6 +3056,16 @@ textarea.form-control-lg {
   background-color: #0d6efd;
   border-color: #0d6efd;
 }
+.btn-primary-sucess {
+    color: #fff;
+    background-color: #61ac00;
+    border-color: #61ac00;
+  }
+.btn-primary-sucess:hover {
+    color: #fff;
+    background-color: #4e8a00;
+    border-color: #4e8a00;
+  }
 .btn-primary:hover {
   color: #fff;
   background-color: #0b5ed7;

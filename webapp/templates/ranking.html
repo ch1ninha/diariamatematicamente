@@ -19,15 +19,26 @@
             </tbody>
         </table>
     </div>
+    <br>
     <div class="buttons-home">
         {% if not usuario_online %}
-            <a href="http://127.0.0.1:5000/login?next_page=math_game"><button>Logar</button></a>
+            <form action="http://127.0.0.1:5000/login?next_page=math_game">
+                <input class="btn btn-secondary" type="submit" value="Logar"/>
+            </form>
+            <br>
+            <form action="http://127.0.0.1:5000/new_user">
+                <input class="btn btn-secondary" type="submit" value="Criar Conta"/>
+            </form>
         {% endif %}
-        <a href="http://127.0.0.1:5000/new_user"><button>Criar Conta</button></a>
+
         {% if usuario_online %}
-            <a href="http://127.0.0.1:5000/logout"><button>Logout</button></a>
-            <a href="http://127.0.0.1:5000/math_game"><button>Acessar Painel</button></a>
+            <form action="http://127.0.0.1:5000/math_game">
+                <input class="btn btn-primary-sucess" type="submit" value="Acessar Matemaniac"/>
+            </form>
+            <br>
+            <form action="http://127.0.0.1:5000/logout">
+                <input class="btn btn-secondary" type="submit" value="Logout"/>
+            </form>
         {% endif %}
     </div>
-    
 {% endblock %}
