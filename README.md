@@ -5,13 +5,13 @@ Aplicação criada utilizando Flask, como ORM o SQLAlchemy e banco de dados o My
 Surgiu como uma "brincadeira" e acabou saindo em forma de utilizar o conhecimento aprendido em flask, buscando criar uma aplicação que poderia ser utilizada por uma outra pessoa, alguns pontos que ainda precisam ser melhorados, como o armazenamento das informações de forma mais segura.
 
 A logica por trás foi essa:
-![workflow da aplicação](matemaniac\assets\matemaniac.png)
+![workflow da aplicação](assets/matemaniac.png)
 
 Montando assim para facilitar na hora de montar as rotas e entender o caminho que o usuario poderia enfrentar.
 
 
-Já a logica por trás do nosso banco de dados em nossas tabelas foi:
-![logica banco de dados](matemaniac\assets\tabela_diagrama.png)
+Já a logica por trás do nosso banco de dados em nossas tabelas foi:<br>
+![logica banco de dados](assets/tabela_diagrama.png)
 
 - db_user
     - id_nickname: chave primaria, é o login do usuario, portanto só pode existir um.
@@ -32,4 +32,4 @@ Já a logica por trás do nosso banco de dados em nossas tabelas foi:
 
 
 Homepage:
-![home page do matemaniac](matemaniac\assets\home_matemaniac.png)
+![home page do matemaniac](assets/home_matemaniac.png)
